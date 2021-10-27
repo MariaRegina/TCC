@@ -1,5 +1,6 @@
 from configDB import configDB
 from dadosAudio import dadosAudio
+import os
 
 class buscaArquivos:
 
@@ -15,8 +16,10 @@ class buscaArquivos:
         arquivos = self.conexaoBanco.exeSql(sql)
 
         for arquivo in arquivos:
-            path = r"C:/Users/Public/BaseTCC/cv-corpus-7.0-2021-07-21/pt/clips/" + arquivo[0]
-            audio = dadosAudio(cont, id, path)
+            nome = arquivo[0].split(".")[0]
+            path = r"C:/Users/maria/Desktop/Faculdade/TCC/Repositoorio/TCC/src/baseValida/" + nome + ".wav";
+            filename, file_extension = os.path.splitext(path)
+            audio = dadosAudio(cont, id, path, nome)
             self.vetDadosAudio.append(audio)
 
 
@@ -33,6 +36,4 @@ class buscaArquivos:
         for id in dados:
             cont += 1
             self.buscaArquivosbyId(id[0], cont)
-            break
-
         self.conexaoBanco.fecharConexao()

@@ -18,20 +18,3 @@ class configDB:
 
     def fecharConexao(self):
         self.conn.close()
-
-
-
-# print("Connection established")
-#
-# cursor = conn.cursor()
-#
-# cursor.execute("select client_id, PATH, sentence from dev LIMIT 1;")
-#
-# dados = cursor.fetchall()
-#
-#
-# print(dados)
-#
-# # Clean up
-# conn.commit()
-# cursor.close()

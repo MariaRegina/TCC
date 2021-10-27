@@ -1,37 +1,46 @@
-import matplotlib.pyplot as plt
+from audioToCSV import audioToCSV
+from primeiraOpcao import primeiraOpcao
+from mlp import mlp
 
-from sklearn import metrics, svm, neural_network, naive_bayes, tree
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-import numpy as np
+class fazAcontecer:
 
-dados = np.loadtxt('base.csv', delimiter=';', dtype=str)
-
-dadosMfcc = dados[:, :-1]
-pessoa = dados[:, 52]
-
-qtde_tuplas = len(dadosMfcc)
+    def __init__(self):
+        self.n_mfcc = 0
+        self.hop_length = 0
 
 
-classificador = neural_network.MLPClassifier(hidden_layer_sizes=(100, 200, 50), max_iter=500)
-# classificador = naive_bayes.()
+    def configurarBase(self):
+        #13-512
+        opcao = input("Alterar base\n1- Sim\n2 - Não")
+        if int(opcao) == 1:
+            audioToCSV(self.hop_length, self.n_mfcc)
 
-X_treino, X_teste, y_treino, y_teste = train_test_split(dadosMfcc, pessoa, test_size=0.3, shuffle=True, random_state=1)
+    def configuraRede(self):
+        opcao = input("Informe a rede:\n1 - MLP\n")
+        if int(opcao) == 1:
+            mlp(self.opcaoDeDados, 4 * int(self.n_mfcc))
 
-classificador.fit(X_treino, y_treino)
 
-predicao = classificador.predict(X_teste)
+    def opcoes(self):
+        self.n_mfcc = input("Número de filtros MFCC: ")
+        self.hop_length = input("Tamanho do salto: ")
+        configurarBase = input('1 - Alterar base\n2 - Continuar\n')
+        if int(configurarBase) == 1:
+            self.configurarBase()
+        self.opcaoDeDados = input("Escolha os dados que serão utilizados na rede\n"
+                                + "1 - Média - Desvio Padrão - Mínimo - Máximo\n"
+                                + "2 - Em construção\n")
+        if int(self.opcaoDeDados) == 1:
+            self.opcaoBase = primeiraOpcao(self.n_mfcc)
 
+        self.opcaoBase.geraArquivo()
 
-f1u = metrics.f1_score(y_teste, predicao, average='micro')
-f1m = metrics.f1_score(y_teste, predicao, average='macro')
-f1 = metrics.f1_score(y_teste, predicao, average=None)
+        self.configuraRede()
 
-print(f'f1u = {f1u}')
-print(f'f1m = {f1m}')
-print(f'f1 = {f1}')
+vai = fazAcontecer()
+vai.opcoes()
+# vai = audioToCSV(512, 13)
+# vai.inicio()
 
-disp = metrics.plot_confusion_matrix(classificador, dadosMfcc, pessoa)
-plt.show()
 
 
