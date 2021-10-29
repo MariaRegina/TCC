@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import csv
 
@@ -25,7 +24,7 @@ class primeiraOpcao:
                 opcoes = self.getDados(line[1:])
                 vet = np.concatenate((opcoes, vet))
                 if int(contMfcc) == int(self.n_mfcc):
-                    vet = np.concatenate(([line[0]], vet))
+                    vet = np.concatenate((vet, [line[0]]))
                     self.escreveArquivo(vet)
                     vet = []
                     contMfcc = 1
