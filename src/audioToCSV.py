@@ -4,16 +4,17 @@ import librosa
 import csv
 
 class audioToCSV:
-    def __init__(self, hop_length, n_mfcc):
+    def __init__(self, hop_length, n_fft, n_mfcc, qtdAmostrasPorPessoa):
         self.buscaDados = buscaArquivos()
-        self.hop_length = hop_length
-        self.n_mfcc = n_mfcc
+        self.hop_length = int(hop_length)
+        self.n_fft = int(n_fft)
+        self.n_mfcc = int(n_mfcc)
+        self.qtdAmostrasPorPessoa = int(qtdAmostrasPorPessoa)
         self.inicio()
 
     def geraVetorMFCC(self, caminho, cont, fileCsv):
         y, sr = librosa.load(caminho)
-        mfcc = librosa.feature.mfcc(y=y, sr=sr, hop_length=self.hop_length, n_mfcc=self.n_mfcc)
-        vet = []
+        mfcc = librosa.feature.mfcc(y=y, sr=sr,n_fft=self.n_fft, hop_length=self.hop_length, n_mfcc=self.n_mfcc)
         for i in range(self.n_mfcc):
             vet = np.concatenate(([cont], mfcc[i]))
             writer = csv.writer(fileCsv, delimiter=';', lineterminator='\n')
@@ -21,12 +22,12 @@ class audioToCSV:
 
     def gerarBase(self, fileCsv):
         arquivos = buscaArquivos()
-        arquivos.buscaIdValidos()
+        arquivos.buscaIdValidos(self.qtdAmostrasPorPessoa)
         vetFiles = arquivos.vetDadosAudio
 
         cont = 1
         for file in vetFiles:
-            print(str(cont) + " / " + str(len(vetFiles)))
+            # print(str(cont) + " / " + str(len(vetFiles)))
             self.geraVetorMFCC(file.path, file.numPessoa, fileCsv)
             cont = cont + 1
 

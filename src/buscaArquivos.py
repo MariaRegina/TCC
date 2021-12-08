@@ -8,10 +8,11 @@ class buscaArquivos:
         self.conexaoBanco = configDB()
         self.vetDadosAudio = []
 
-    def buscaArquivosbyId(self, id, cont):
+    def buscaArquivosbyId(self, id, cont, qtdAmostrasPorPessoa):
         sql = " select path from train "
         sql += " where client_id = '" + id + "' and length(sentence) >= 70 "
-        sql += " order by 1 desc; "
+        sql += " order by 1 desc "
+        sql += " limit " + str(qtdAmostrasPorPessoa)
 
         arquivos = self.conexaoBanco.exeSql(sql)
 
@@ -23,17 +24,17 @@ class buscaArquivos:
             self.vetDadosAudio.append(audio)
 
 
-    def buscaIdValidos(self):
-        sql = " select a.client_id from (select count(client_id) AS QTD, client_id from train where length(sentence) >= 70 "
-        sql += " group by client_id order by 1 desc) A "
-        sql += " inner join train B on a.client_id = b.client_id "
-        sql += " where QTD >= 10 "
-        sql += " group by A.client_id; "
+    def buscaIdValidos(self, qtdAmostrasPorPessoa):
+        sql = ' select a.client_id from (select count(client_id) AS QTD, client_id from train where length(sentence) >= 70 '
+        sql += ' group by client_id order by 1 desc) A '
+        sql += ' inner join train B on a.client_id = b.client_id '
+        sql += ' where QTD >= ' + str(qtdAmostrasPorPessoa) + ' '
+        sql += ' group by A.client_id; '
 
         dados = self.conexaoBanco.exeSql(sql)
 
         cont = 0
         for id in dados:
             cont += 1
-            self.buscaArquivosbyId(id[0], cont)
+            self.buscaArquivosbyId(id[0], cont, qtdAmostrasPorPessoa)
         self.conexaoBanco.fecharConexao()

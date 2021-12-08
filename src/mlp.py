@@ -20,7 +20,7 @@ class mlp:
         dadosMfcc = dados[:, :-1]
         pessoa = dados[:, int(self.tamVet)]
 
-        classificador = neural_network.MLPClassifier(hidden_layer_sizes=(100, 200, 50), max_iter=500)
+        classificador = neural_network.MLPClassifier(hidden_layer_sizes=(200, 150, 100), max_iter=250)
 
         X_treino, X_teste, y_treino, y_teste = train_test_split(dadosMfcc, pessoa, test_size=0.3, shuffle=True,
                                                                 random_state=1)
@@ -33,11 +33,15 @@ class mlp:
         f1m = metrics.f1_score(y_teste, predicao, average='macro')
         f1 = metrics.f1_score(y_teste, predicao, average=None)
 
+        np.savetxt("saida.txt", f1)
+
         print(f'f1u = {f1u}')
         print(f'f1m = {f1m}')
-        print(f'f1 = {f1}')
+        print(f1)
+
+        print("\n\n\n")
 
         disp = metrics.plot_confusion_matrix(classificador, dadosMfcc, pessoa)
         plt.show()
 
-mlp(1, 52)
+# mlp(1, 52)
